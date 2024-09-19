@@ -36,6 +36,7 @@ Run the project:
 ```sh
 dotnet run
 ```
+
 Prerequisites
 .NET 8.0 SDK or later.  
 An OpenAI API key for the OpenAI_CRUD branch.  
