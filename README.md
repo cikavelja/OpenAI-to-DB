@@ -51,7 +51,7 @@ If you have any suggestions or improvements, feel free to create a pull request 
 
 ## License
 
-MIT
+Apache-2.0 license
 
 **Free Software, Hell Yeah!**
 
