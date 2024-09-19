@@ -1,20 +1,13 @@
 # Sample Project with UnitOfWork, OpenTelemetry, and OpenAI Integration
 
 ### Overview
-This repository contains a sample project demonstrating the use of the Unit of Work pattern, OpenTelemetry for distributed tracing, and integration with the OpenAI API. The project is structured in two branches:
-
-## Branches
-- **master**: Contains the core implementation of the project with UnitOfWork and OpenTelemetry integration.
-- **OpenAI_CRUD**: Extends the core implementation by integrating the OpenAI API and adding CRUD operations to a database, along with some mashup functionalities.  
+This repository contains a sample project demonstrating the use of the Unit of Work pattern, OpenTelemetry for distributed tracing, and integration with the OpenAI API. The project also includes CRUD operations with database support and mashup functionalities.
 
 ### Master Branch
 - **UnitOfWork Pattern**: Implements the UnitOfWork pattern to manage database transactions efficiently. This pattern helps in maintaining a list of operations that need to be executed within a transactional scope.
-- **OpenTelemetry**: Integrates OpenTelemetry to provide distributed tracing and monitoring capabilities. This helps in tracking the application's performance and tracing requests through the system.  
-
-### OpenAI_CRUD Branch
-This branch extends the functionality of the master branch by adding:
+- **OpenTelemetry**: Integrates OpenTelemetry to provide distributed tracing and monitoring capabilities. This helps in tracking the application's performance and tracing requests through the system.
 - **OpenAI API Integration**: Connects to the OpenAI API to utilize its language models for various text processing tasks.
-- **CRUD Operations**: Adds basic Create, Read, Update, and Delete operations for interacting with a database.
+- **CRUD Operations**: Includes basic Create, Read, Update, and Delete operations for interacting with a database.
 - **Mashup Functionalities**: Combines OpenAI's capabilities with CRUD operations, allowing for enhanced data processing and manipulation.
 
 ## Features
@@ -44,12 +37,12 @@ Run the project:
 dotnet run
 ```
 Prerequisites
-.NET 8.0 SDK or later.
-An OpenAI API key for the OpenAI_CRUD branch.
-A database system (e.g., SQL Server, SQLite) for CRUD operations.
-Contributing
-Contributions are welcome! 
-If you have any suggestions or improvements, feel free to create a pull request or open an issue.
+.NET 8.0 SDK or later.  
+An OpenAI API key for the OpenAI_CRUD branch.  
+A database system (e.g., SQL Server, SQLite) for CRUD operations.  
+Contributing  
+Contributions are welcome!   
+If you have any suggestions or improvements, feel free to create a pull request or open an issue.  
 
 ## License
 
