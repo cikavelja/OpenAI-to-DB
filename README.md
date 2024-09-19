@@ -1,22 +1,23 @@
 # Sample Project with UnitOfWork, OpenTelemetry, and OpenAI Integration
 
-
-## Overview
+### Overview
 This repository contains a sample project demonstrating the use of the Unit of Work pattern, OpenTelemetry for distributed tracing, and integration with the OpenAI API. The project is structured in two branches:
+
 ## Branches
-master: Contains the core implementation of the project with UnitOfWork and OpenTelemetry integration.
-OpenAI_CRUD: Extends the core implementation by integrating the OpenAI API and adding CRUD operations to a database, along with some mashup functionalities.
+- **master**: Contains the core implementation of the project with UnitOfWork and OpenTelemetry integration.
+- **OpenAI_CRUD**: Extends the core implementation by integrating the OpenAI API and adding CRUD operations to a database, along with some mashup functionalities.  
 
 ### Master Branch
- UnitOfWork Pattern: Implements the UnitOfWork pattern to manage database transactions efficiently. This pattern helps in maintaining a list of operations that need to be executed within a transactional scope.
-OpenTelemetry: Integrates OpenTelemetry to provide distributed tracing and monitoring capabilities. This helps in tracking the application's performance and tracing requests through the system.
+- **UnitOfWork Pattern**: Implements the UnitOfWork pattern to manage database transactions efficiently. This pattern helps in maintaining a list of operations that need to be executed within a transactional scope.
+- **OpenTelemetry**: Integrates OpenTelemetry to provide distributed tracing and monitoring capabilities. This helps in tracking the application's performance and tracing requests through the system.  
 
 ### OpenAI_CRUD Branch
 This branch extends the functionality of the master branch by adding:
-OpenAI API Integration: Connects to the OpenAI API to utilize its language models for various text processing tasks.
-CRUD Operations: Adds basic Create, Read, Update, and Delete operations for interacting with a database.
-Mashup Functionalities: Combines OpenAI's capabilities with CRUD operations, allowing for enhanced data processing and manipulation.
-### Features
+- **OpenAI API Integration**: Connects to the OpenAI API to utilize its language models for various text processing tasks.
+- **CRUD Operations**: Adds basic Create, Read, Update, and Delete operations for interacting with a database.
+- **Mashup Functionalities**: Combines OpenAI's capabilities with CRUD operations, allowing for enhanced data processing and manipulation.
+
+## Features
 * Full CRUD implementation with a database of your choice (e.g., SQL Server, SQLite).
 * Integration with the OpenAI API for text generation and processing.
 * Example mashup of CRUD operations with OpenAI responses.
@@ -25,6 +26,7 @@ Mashup Functionalities: Combines OpenAI's capabilities with CRUD operations, all
 Clone the repository:
 ```sh
 git clone -b master https://github.com/cikavelja/SampleStartProject.git
+
 ```
 
 Navigate to the project directory and restore the dependencies:
