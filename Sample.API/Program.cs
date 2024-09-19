@@ -7,6 +7,7 @@ using Sample.API.Persistence.Formatter;
 using Sample.API.Persistence.Repositories;
 using Sample.API.Services;
 using Sample.API.Services.Interfaces;
+using Sample.API.Infrastructure.External.API.AI.open.ai;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,7 @@ builder.Services.AddControllers(options =>
 }).AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-});  
+});
 
 // Register the DbContext with the database connection string
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -29,16 +30,30 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 // Register Services
-builder.Services.AddScoped<ICustomerService,CustomerService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IOpenAIService, OpenAIService>();
+builder.Services.AddScoped(typeof(IRawSqlRepository<>), typeof(RawSqlRepository<>));
+
+//Register External API Services
+builder.Services.AddScoped<IGetAISQLResponse, GetAISQLResponse>();
 
 builder.Services.AddControllers()
-    .AddNewtonsoftJson(); 
+    .AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Disable CORS
+builder.Services.AddCors(options => options.AddPolicy("Open",
+     builder =>
+     {
+         builder.AllowAnyMethod()
+             .SetIsOriginAllowed(_ => true)
+             .AllowAnyHeader()
+             .AllowCredentials().Build();
+     }));
 
 //Add OpenTelemetry
 builder.Logging.AddOpenTelemetry(logging =>
@@ -65,7 +80,6 @@ if (useOtlpExporter)
     builder.Services.AddOpenTelemetry().UseOtlpExporter();
 }
 
-
 var app = builder.Build();
 
 // Seed the database at startup
@@ -80,6 +94,9 @@ using (var scope = app.Services.CreateScope())
     // Seed the database
     DbSeeder.Seed(dbContext);
 }
+
+app.UseCors("Open");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
