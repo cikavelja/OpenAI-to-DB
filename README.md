@@ -33,9 +33,9 @@ cd your-repository
 dotnet restore
 ```
 
-Update the database connection string in appsettings.json to match your database configuration.
+**Update the database connection string in appsettings.json to match your database configuration.**  
 
-Update the OpenAI security key in Sample.API.Infrastructure.External.API.AI.open.ai.GetAISQLResponse (line 9)
+**Update the OpenAI security key in Sample.API.Infrastructure.External.API.AI.open.ai.GetAISQLResponse (line 9)**  
 
 Run the project:
 ```sh
