@@ -20,7 +20,8 @@ namespace Sample.API.Services
 
         public async Task<dynamic> GetSQLAsync(string chat)
         {
-            return await _rawSql.ExecuteRawSqlAsync(await _getAISQL.GetSQLAsync(chat));
+            var sqlByAI = await _getAISQL.GetSQLAsync(chat);
+            return await _rawSql.ExecuteRawSqlAsync(sqlByAI);
 
         }
     }
