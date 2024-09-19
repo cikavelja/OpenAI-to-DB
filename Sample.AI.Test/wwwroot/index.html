@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Recognition with API Call</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        #result {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+            min-height: 50px;
+            white-space: pre-wrap; /* Preserve whitespace */
+        }
+
+        #json-response {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #f8f9fa;
+            overflow-x: auto; /* Enable horizontal scroll */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h1 class="text-center">Voice Recognition for DB CRUD Demo</h1>
+        <div class="text-center">
+            <button id="start-btn" class="btn btn-primary">Start Recognition</button>
+            <button id="stop-btn" class="btn btn-danger" disabled>Stop Recognition</button>
+        </div>
+        <div id="result" class="text-center mt-4">Recognized text will appear here...</div>
+        <div id="json-response" class="mt-4">
+            <h5>API Response:</h5>
+            <pre id="api-response">The API response will appear here...</pre>
+        </div>
+    </div>
+
+    <script>
+    const startBtn = document.getElementById('start-btn');
+    const stopBtn = document.getElementById('stop-btn');
+    const resultDiv = document.getElementById('result');
+    const apiResponseDiv = document.getElementById('api-response');
+
+    let recognition;
+
+    if ('webkitSpeechRecognition' in window) {
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        recognition.onstart = () => {
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            resultDiv.textContent = "Listening...";
+        };
+
+        recognition.onresult = (event) => {
+            let transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript;
+            }
+            resultDiv.textContent = transcript;
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Error occurred in recognition: ' + event.error);
+            resultDiv.textContent = "Error occurred: " + event.error;
+        };
+
+        recognition.onend = () => {
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            let recognizedText = resultDiv.textContent.split(" (Stopped)")[0]; // Get the text before "(Stopped)"
+
+            // Remove trailing period if it exists
+            recognizedText = recognizedText.trim().replace(/\.$/, '');
+
+            // Call the API with recognized text
+            callChatAPI(recognizedText);
+        };
+
+        startBtn.onclick = () => {
+            recognition.start();
+        };
+
+        stopBtn.onclick = () => {
+            recognition.stop();
+        };
+    } else {
+        alert('Your browser does not support the Web Speech API.');
+    }
+
+    function callChatAPI(chatText) {
+        const url = `http://localhost:5131/api/Chat?chat=${encodeURIComponent(chatText)}`;
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('API response:', data);
+                apiResponseDiv.textContent = JSON.stringify(data, null, 2); // Format JSON
+            })
+            .catch(error => {
+                console.error('Error calling API:', error);
+                apiResponseDiv.textContent = "Error calling API: " + error;
+            });
+    }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
