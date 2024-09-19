@@ -8,7 +8,7 @@ master: Contains the core implementation of the project with UnitOfWork and Open
 OpenAI_CRUD: Extends the core implementation by integrating the OpenAI API and adding CRUD operations to a database, along with some mashup functionalities.
 
 ### Master Branch
-<ins>text</ins> UnitOfWork Pattern: Implements the UnitOfWork pattern to manage database transactions efficiently. This pattern helps in maintaining a list of operations that need to be executed within a transactional scope.
+ UnitOfWork Pattern: Implements the UnitOfWork pattern to manage database transactions efficiently. This pattern helps in maintaining a list of operations that need to be executed within a transactional scope.
 OpenTelemetry: Integrates OpenTelemetry to provide distributed tracing and monitoring capabilities. This helps in tracking the application's performance and tracing requests through the system.
 
 ### OpenAI_CRUD Branch
@@ -34,6 +34,7 @@ dotnet restore
 ```
 
 Update the database connection string in appsettings.json to match your database configuration.
+
 Update the OpenAI security key in Sample.API.Infrastructure.External.API.AI.open.ai.GetAISQLResponse (line 9)
 
 Run the project:
