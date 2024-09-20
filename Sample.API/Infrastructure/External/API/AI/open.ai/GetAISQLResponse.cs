@@ -1,12 +1,20 @@
-﻿using OpenAI_API;
+﻿using Microsoft.Extensions.Options;
+using OpenAI_API;
+using Sample.API.Persistence.Dto.AI;
 
 namespace Sample.API.Infrastructure.External.API.AI.open.ai
 {
     public class GetAISQLResponse : IGetAISQLResponse
     {
+        private readonly string _openAiApiKey;
+
+        public GetAISQLResponse(IOptions<ExternalAISettings> options)
+        {
+            _openAiApiKey = options.Value.OpenAI;
+        }
         public async Task<string> GetSQLAsync(string chat)
         {
-            var openAi = new OpenAIAPI(new APIAuthentication(""));
+            var openAi = new OpenAIAPI(new APIAuthentication(_openAiApiKey));
             var conversation = openAi.Chat.CreateConversation();
 
             var testString = @"

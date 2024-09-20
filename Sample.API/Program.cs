@@ -8,6 +8,7 @@ using Sample.API.Persistence.Repositories;
 using Sample.API.Services;
 using Sample.API.Services.Interfaces;
 using Sample.API.Infrastructure.External.API.AI.open.ai;
+using Sample.API.Persistence.Dto.AI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,9 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOpenAIService, OpenAIService>();
 builder.Services.AddScoped(typeof(IRawSqlRepository<>), typeof(RawSqlRepository<>));
+
+// Add configuration to the container
+builder.Services.Configure<ExternalAISettings>(builder.Configuration.GetSection("External:AI"));
 
 //Register External API Services
 builder.Services.AddScoped<IGetAISQLResponse, GetAISQLResponse>();
