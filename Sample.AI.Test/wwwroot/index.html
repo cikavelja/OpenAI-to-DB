@@ -94,7 +94,7 @@
     }
 
     function callChatAPI(chatText) {
-        const url = `http://localhost:5131/api/Chat?chat=${encodeURIComponent(chatText)}`;
+        const url = `https://localhost:7143/api/Chat?chat=${encodeURIComponent(chatText)}`;
         fetch(url)
             .then(response => {
                 if (!response.ok) {
