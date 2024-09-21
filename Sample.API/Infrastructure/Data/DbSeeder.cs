@@ -12,20 +12,32 @@ namespace Sample.API.Infrastructure.Data
 
             if (!dbContext.Customers.Any() && !dbContext.Products.Any() && !dbContext.Orders.Any())
             {
-                // Seed customers
+                // Seed customers with real names
                 Console.WriteLine("Seeding customers...");
-                var customers = Enumerable.Range(1, 10).Select(i => new Customer
+                var customerNames = new List<string>
+        {
+            "Alice Johnson", "Bob Williams", "Carol Davis", "David Wilson", "Eve Brown",
+            "Franklin Green", "Grace Lee", "Henry Martin", "Isabel White", "Jack Harris"
+        };
+
+                var customers = customerNames.Select((name, i) => new Customer
                 {
-                    Name = $"Customer {i}"
+                    Name = name
                 }).ToList();
                 dbContext.Customers.AddRange(customers);
 
-                // Seed products
+                // Seed products with unique vegetable names
                 Console.WriteLine("Seeding products...");
-                var products = Enumerable.Range(1, 10).Select(i => new Product
+                var vegetableNames = new List<string>
+        {
+            "Carrot", "Broccoli", "Spinach", "Cauliflower", "Tomato",
+            "Cucumber", "Pepper", "Onion", "Garlic", "Zucchini"
+        };
+
+                var products = vegetableNames.Select((veg, i) => new Product
                 {
-                    ProductName = $"Product {i}",
-                    Price = i * 10 // Sample price
+                    ProductName = veg,
+                    Price = (i + 1) * 10 // Sample price, can be adjusted
                 }).ToList();
                 dbContext.Products.AddRange(products);
 
@@ -34,13 +46,13 @@ namespace Sample.API.Infrastructure.Data
                 var random = new Random();
                 var orders = Enumerable.Range(1, 10).Select(i => new Order
                 {
-                    CustomerId = random.Next(1, 11), // Assign to random customer
+                    CustomerId = random.Next(1, customers.Count + 1), // Assign to random customer
                     OrderDate = DateTime.Now,
                     OrderDetails = new List<OrderDetail>
             {
                 new OrderDetail
                 {
-                    ProductId = random.Next(1, 11), // Assign random product
+                    ProductId = random.Next(1, products.Count + 1), // Assign random product
                     Quantity = random.Next(1, 5) // Random quantity between 1 and 5
                 }
             }

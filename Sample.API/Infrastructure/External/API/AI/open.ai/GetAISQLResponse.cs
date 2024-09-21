@@ -18,7 +18,7 @@ namespace Sample.API.Infrastructure.External.API.AI.open.ai
             var conversation = openAi.Chat.CreateConversation();
 
             var testString = @"
-                    Using folowing classes, write a SQL query to " +
+                    Using folowing classes, write a MS SQL query to " +
 
                 chat +
               @"  
