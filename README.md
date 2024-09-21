@@ -32,7 +32,7 @@ This repository contains a sample project demonstrating the use of the Unit of W
    - "Delete employee with ID 4."
 3. The recognized text is sent to the API, which leverages OpenAI to generate an SQL query based on the voice command.
 4. The SQL query is executed using the API's CRUD logic and the result is returned.
-5. The user receives visual and/or auditory feedback indicating the success or failure of the operation.
+5. The user receives visual feedback indicating the success or failure of the operation.
 
 ### Getting Started
 Clone the repository:
