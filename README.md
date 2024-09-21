@@ -36,6 +36,11 @@ Run the project:
 dotnet run
 ```
 
+### Aspire dashboard with OpenTelemetry
+
+https://learn.microsoft.com/en-us/samples/dotnet/aspire-samples/aspire-standalone-dashboard/
+
+
 Prerequisites
 .NET 8.0 SDK or later.  
 An OpenAI API key for the OpenAI_CRUD branch.  
