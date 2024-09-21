@@ -10,7 +10,6 @@ This repository contains a sample project demonstrating the use of the Unit of W
 - **CRUD Operations**: Includes basic Create, Read, Update, and Delete operations for interacting with a database.
 - **Mashup Functionalities**: Combines OpenAI's capabilities with CRUD operations, allowing for enhanced data processing and manipulation.
 - **Voice Recognition for Database Commands**: Integrates voice recognition using the Web Speech API, allowing users to perform database operations such as Create, Read, Update, and Delete via voice commands..
-- : 
 
 ## Features
 * Full CRUD implementation with a database of your choice (e.g., SQL Server, SQLite).
