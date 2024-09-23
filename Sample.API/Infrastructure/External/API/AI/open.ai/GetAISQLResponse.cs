@@ -16,7 +16,7 @@ namespace Sample.API.Infrastructure.External.API.AI.open.ai
         {
             var openAi = new OpenAIAPI(new APIAuthentication(_openAiApiKey));
             var conversation = openAi.Chat.CreateConversation();
-
+            //Set prompt for the conversation
             var testString = @"
                     Using folowing classes, write a MS SQL query to " +
 
