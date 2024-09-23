@@ -1,20 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sample.API.Infrastructure.Data;
-using System.Dynamic;
+using System.Text.Json;
 
 namespace Sample.API.Persistence.Repositories
 {
     public class RawSqlRepository<T> : IRawSqlRepository<T> where T : class
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<RawSqlRepository<T>> _logger;
 
-        public RawSqlRepository(AppDbContext context)
+        public RawSqlRepository(AppDbContext context, ILogger<RawSqlRepository<T>> logger)
         {
             _context = context;
+            _logger = logger;
         }
-
-        public async Task<IEnumerable<dynamic>> ExecuteRawSqlAsync(string sql, params object[] parameters)
+        public async Task<object> ExecuteRawSqlAsync(string sql, params object[] parameters)
         {
+            _logger.LogInformation("Executing SQL: {Sql} with parameters: {Parameters}", sql, parameters);
+
             var connection = _context.Database.GetDbConnection();
             await connection.OpenAsync();
 
@@ -30,23 +33,25 @@ namespace Sample.API.Persistence.Repositories
                     command.Parameters.Add(parameter);
                 }
 
-                var result = new List<dynamic>();
+                var result = new List<string>();
+                var jsonResponse = "";
                 using (var reader = await command.ExecuteReaderAsync())
                 {
                     while (await reader.ReadAsync())
                     {
-                        var row = new ExpandoObject() as IDictionary<string, Object>;
+                        var row = new Dictionary<string, string>();
                         for (int i = 0; i < reader.FieldCount; i++)
                         {
-                            row.Add(reader.GetName(i), reader[i]);
+                            row.Add(reader.GetName(i), reader[i].ToString());
+                            jsonResponse += reader[i].ToString();
                         }
-                        result.Add(row);
+
                     }
                 }
-                return result;
+
+                return jsonResponse;
             }
         }
-
 
     }
 }

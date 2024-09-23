@@ -3,9 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Recognition with API Call</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Chat API with Voice and Text</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        .json-key {
+            color: brown;
+            font-weight: bold;
+        }
+
+        .json-value {
+            color: navy;
+        }
+
+        .json-string {
+            color: olive;
+        }
+
+        .collapsible {
+            cursor: pointer;
+        }
+
+        .nested {
+            display: none;
+            margin-left: 1em;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .toggle {
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
         #result {
             border: 1px solid #ccc;
             padding: 10px;
@@ -13,108 +44,256 @@
             min-height: 50px;
             white-space: pre-wrap; /* Preserve whitespace */
         }
-
-        #json-response {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-top: 20px;
-            background-color: #f8f9fa;
-            overflow-x: auto; /* Enable horizontal scroll */
-        }
     </style>
 </head>
 <body>
-
     <div class="container mt-5">
-        <h1 class="text-center">Voice Recognition for DB CRUD Demo</h1>
-        <div class="text-center">
-            <button id="start-btn" class="btn btn-primary">Start Recognition</button>
-            <button id="stop-btn" class="btn btn-danger" disabled>Stop Recognition</button>
-        </div>
-        <div id="result" class="text-center mt-4">Recognized text will appear here...</div>
-        <div id="json-response" class="mt-4">
-            <h5>API Response:</h5>
-            <pre id="api-response">The API response will appear here...</pre>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="text-tab" data-bs-toggle="tab" data-bs-target="#text" type="button" role="tab" aria-controls="text" aria-selected="true">Text Query</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="voice-tab" data-bs-toggle="tab" data-bs-target="#voice" type="button" role="tab" aria-controls="voice" aria-selected="false">Voice Commands</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <!-- Tab 1: Text Query -->
+            <div class="tab-pane fade show active" id="text" role="tabpanel" aria-labelledby="text-tab">
+                <h1 class="mt-4">Chat API</h1>
+                <div class="mb-3">
+                    <label for="chatInput" class="form-label">Enter Chat Message</label>
+                    <textarea id="chatInput" class="form-control" rows="3" placeholder="Type your message here..."></textarea>
+                </div>
+                <button id="sendButton" class="btn btn-primary mb-3">Send</button>
+
+                <div class="mb-3">
+                    <button id="toggleAllButtonText" class="btn btn-secondary">Expand All</button>
+                </div>
+
+                <h2 class="mt-4">API Response (Formatted)</h2>
+                <div id="formattedResponseText" class="border p-3 bg-light"></div>
+            </div>
+
+            <!-- Tab 2: Voice Commands -->
+            <div class="tab-pane fade" id="voice" role="tabpanel" aria-labelledby="voice-tab">
+                <h1 class="text-center mt-4">Voice Recognition for DB CRUD Demo</h1>
+                <div class="text-center">
+                    <button id="start-btn" class="btn btn-primary">Start Recognition</button>
+                    <button id="stop-btn" class="btn btn-danger" disabled>Stop Recognition</button>
+                </div>
+                <div id="result" class="text-center mt-4">Recognized text will appear here...</div>
+
+                <div class="mt-4">
+                    <button id="toggleAllButtonVoice" class="btn btn-secondary">Expand All</button>
+                </div>
+
+                <h2 class="mt-4">API Response (Formatted)</h2>
+                <div id="formattedResponseVoice" class="border p-3 bg-light"></div>
+            </div>
         </div>
     </div>
 
     <script>
-    const startBtn = document.getElementById('start-btn');
-    const stopBtn = document.getElementById('stop-btn');
-    const resultDiv = document.getElementById('result');
-    const apiResponseDiv = document.getElementById('api-response');
+        // Text Query Tab API Call
+        document.getElementById('sendButton').addEventListener('click', async () => {
+            const chatMessage = document.getElementById('chatInput').value;
+            if (chatMessage) {
+                try {
+                    const url = `https://localhost:7143/api/Chat?chat=${encodeURIComponent(chatMessage)}`;
+                    const response = await fetch(url);
 
-    let recognition;
+                    if (response.ok) {
+                        const jsonResponse = await response.json();
+                        let parsedData = typeof jsonResponse === 'string' ? JSON.parse(jsonResponse) : jsonResponse;
 
-    if ('webkitSpeechRecognition' in window) {
-        recognition = new webkitSpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-
-        recognition.onstart = () => {
-            startBtn.disabled = true;
-            stopBtn.disabled = false;
-            resultDiv.textContent = "Listening...";
-        };
-
-        recognition.onresult = (event) => {
-            let transcript = '';
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                transcript += event.results[i][0].transcript;
-            }
-            resultDiv.textContent = transcript;
-        };
-
-        recognition.onerror = (event) => {
-            console.error('Error occurred in recognition: ' + event.error);
-            resultDiv.textContent = "Error occurred: " + event.error;
-        };
-
-        recognition.onend = () => {
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-            let recognizedText = resultDiv.textContent.split(" (Stopped)")[0]; // Get the text before "(Stopped)"
-
-            // Remove trailing period if it exists
-            recognizedText = recognizedText.trim().replace(/\.$/, '');
-
-            // Call the API with recognized text
-            callChatAPI(recognizedText);
-        };
-
-        startBtn.onclick = () => {
-            recognition.start();
-        };
-
-        stopBtn.onclick = () => {
-            recognition.stop();
-        };
-    } else {
-        alert('Your browser does not support the Web Speech API.');
-    }
-
-    function callChatAPI(chatText) {
-        const url = `https://localhost:7143/api/Chat?chat=${encodeURIComponent(chatText)}`;
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                        renderCollapsibleJson(parsedData, document.getElementById('formattedResponseText'));
+                        document.getElementById('toggleAllButtonText').textContent = 'Expand All';
+                    } else {
+                        document.getElementById('formattedResponseText').textContent = 'Error: ' + response.status;
+                    }
+                } catch (error) {
+                    document.getElementById('formattedResponseText').textContent = 'Error: ' + error.message;
                 }
-                return response.json();
-            })
-            .then(data => {
-                console.log('API response:', data);
-                apiResponseDiv.textContent = JSON.stringify(data, null, 2); // Format JSON
-            })
-            .catch(error => {
-                console.error('Error calling API:', error);
-                apiResponseDiv.textContent = "Error calling API: " + error;
+            } else {
+                alert("Please enter a chat message.");
+            }
+        });
+
+        // Voice Recognition Tab API Call
+        const startBtn = document.getElementById('start-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const resultDiv = document.getElementById('result');
+        const formattedResponseVoiceDiv = document.getElementById('formattedResponseVoice');
+
+        let recognition;
+
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            recognition.onstart = () => {
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                resultDiv.textContent = "Listening...";
+            };
+
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
+                resultDiv.textContent = transcript;
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Error occurred in recognition: ' + event.error);
+                resultDiv.textContent = "Error occurred: " + event.error;
+            };
+
+            recognition.onend = () => {
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                let recognizedText = resultDiv.textContent.trim().replace(/\.$/, '');
+
+                callChatAPI(recognizedText);
+            };
+
+            startBtn.onclick = () => {
+                recognition.start();
+            };
+
+            stopBtn.onclick = () => {
+                recognition.stop();
+            };
+        } else {
+            alert('Your browser does not support the Web Speech API.');
+        }
+
+        function callChatAPI(chatText) {
+            const url = `https://localhost:7143/api/Chat?chat=${encodeURIComponent(chatText)}`;
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    renderCollapsibleJson(data, formattedResponseVoiceDiv);
+                    document.getElementById('toggleAllButtonVoice').textContent = 'Expand All';
+                })
+                .catch(error => {
+                    console.error('Error calling API:', error);
+                    formattedResponseVoiceDiv.textContent = "Error calling API: " + error;
+                });
+        }
+
+        // Function to create collapsible JSON elements
+        function renderCollapsibleJson(json, container) {
+            container.innerHTML = '';
+            container.appendChild(createTree(json));
+        }
+
+        function createTree(json) {
+            if (typeof json !== 'object' || json === null) {
+                return document.createTextNode(json);
+            }
+
+            const ul = document.createElement('ul');
+            for (let key in json) {
+                const li = document.createElement('li');
+
+                if (typeof json[key] === 'object' && json[key] !== null) {
+                    const toggle = document.createElement('span');
+                    toggle.textContent = '+';
+                    toggle.classList.add('toggle', 'collapsible');
+                    toggle.addEventListener('click', function () {
+                        const nested = li.querySelector('.nested');
+                        if (nested.style.display === 'none') {
+                            nested.style.display = 'block';
+                            toggle.textContent = '-';
+                        } else {
+                            nested.style.display = 'none';
+                            toggle.textContent = '+';
+                        }
+                    });
+
+                    const keyNode = document.createElement('span');
+                    keyNode.textContent = key + ': ';
+                    keyNode.classList.add('json-key');
+
+                    const nested = createTree(json[key]);
+                    nested.classList.add('nested');
+                    nested.style.display = 'none';
+
+                    li.appendChild(toggle);
+                    li.appendChild(keyNode);
+                    li.appendChild(nested);
+                } else {
+                    const keyNode = document.createElement('span');
+                    keyNode.textContent = key + ': ';
+                    keyNode.classList.add('json-key');
+
+                    const valueNode = document.createElement('span');
+                    valueNode.textContent = JSON.stringify(json[key]);
+                    valueNode.classList.add('json-string');
+
+                    li.appendChild(keyNode);
+                    li.appendChild(valueNode);
+                }
+
+                ul.appendChild(li);
+            }
+            return ul;
+        }
+
+        // Expand/Collapse all functionality for both tabs
+        function toggleAll(action, tab) {
+            const toggles = document.querySelectorAll(`#${tab} .toggle`);
+            const nestedElements = document.querySelectorAll(`#${tab} .nested`);
+
+            toggles.forEach((toggle) => {
+                if (action === 'expand') {
+                    toggle.textContent = '-';
+                } else {
+                    toggle.textContent = '+';
+                }
             });
-    }
+
+            nestedElements.forEach((nested) => {
+                if (action === 'expand') {
+                    nested.style.display = 'block';
+                } else {
+                    nested.style.display = 'none';
+                }
+            });
+        }
+
+        document.getElementById('toggleAllButtonText').addEventListener('click', function () {
+            const currentState = this.textContent;
+            if (currentState === 'Expand All') {
+                toggleAll('expand', 'text');
+                this.textContent = 'Collapse All';
+            } else {
+                toggleAll('collapse', 'text');
+                this.textContent = 'Expand All';
+            }
+        });
+
+        document.getElementById('toggleAllButtonVoice').addEventListener('click', function () {
+            const currentState = this.textContent;
+            if (currentState === 'Expand All') {
+                toggleAll('expand', 'voice');
+                this.textContent = 'Collapse All';
+            } else {
+                toggleAll('collapse', 'voice');
+                this.textContent = 'Expand All';
+            }
+        });
     </script>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

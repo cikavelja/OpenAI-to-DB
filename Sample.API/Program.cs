@@ -1,14 +1,14 @@
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using OpenTelemetry;
 using Sample.API.Infrastructure.Data;
+using Sample.API.Infrastructure.External.API.AI.open.ai;
+using Sample.API.Persistence.Dto.AI;
 using Sample.API.Persistence.Formatter;
 using Sample.API.Persistence.Repositories;
 using Sample.API.Services;
 using Sample.API.Services.Interfaces;
-using Sample.API.Infrastructure.External.API.AI.open.ai;
-using Sample.API.Persistence.Dto.AI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,12 +70,15 @@ builder.Services.AddOpenTelemetry()
     .WithMetrics(metrics =>
     {
         metrics.AddRuntimeInstrumentation()
-            .AddMeter("Microsoft.AspNetCore.Hosting", "Microsoft.AspNetCore.Server.Kestrel", "System.Net.Http");
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation();
     })
     .WithTracing(tracing =>
     {
         tracing.AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation();
+            .AddHttpClientInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation();
+
     });
 
 var useOtlpExporter = !string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);

@@ -2,6 +2,6 @@
 {
     public interface IRawSqlRepository<T>
     {
-        Task<IEnumerable<dynamic>> ExecuteRawSqlAsync(string sql, params object[] parameters);
+        Task<object> ExecuteRawSqlAsync(string sql, params object[] parameters);
     }
 }

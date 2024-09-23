@@ -55,7 +55,9 @@ namespace Sample.API.Infrastructure.External.API.AI.open.ai
                     public Product Product { get; set; }
                 }
 
-                Without explanation, just raw sql, please";
+                Without explanation, just raw sql and add FOR JSON AUTO, INCLUDE_NULL_VALUES at the end of SQL script, please.
+                If SQL script returns data add FOR JSON AUTO, INCLUDE_NULL_VALUES at the end of SQL script";
+
 
             conversation.AppendUserInput(testString);
 
