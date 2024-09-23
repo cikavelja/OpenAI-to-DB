@@ -35,6 +35,8 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOpenAIService, OpenAIService>();
+builder.Services.AddScoped<IDbRepresentationService, DbRepresentationService>();
+
 builder.Services.AddScoped(typeof(IRawSqlRepository<>), typeof(RawSqlRepository<>));
 
 // Add configuration to the container
